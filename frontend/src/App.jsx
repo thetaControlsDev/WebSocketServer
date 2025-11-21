@@ -7,7 +7,11 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 
 function App() {
   const [userLocation, setUserLocation] = useState(null);
-  const [socketUrl, setSocketUrl] = useState("ws://127.0.0.1:1234");
+  //"https://websocketserver-npgf.onrender.com"
+  const [socketUrl, setSocketUrl] = useState(
+    "https://websocketserver-npgf.onrender.com"
+  );
+  //const [socketUrl, setSocketUrl] = useState("ws://127.0.0.1:1234");
   const [count, setCount] = useState(0);
   const [log, setLog] = useState("");
 
