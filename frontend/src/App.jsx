@@ -76,7 +76,7 @@ function App() {
         </button>
       </div>
       <div className="flex justify-center align-center h-[60vh] border-1 border-blue-100 m-0">
-        <textarea className="h-[60vh]" value={log} readOnly></textarea>
+        <textarea className="h-[60vh] w-full" value={log} readOnly></textarea>
       </div>
     </div>
   );
