@@ -4,8 +4,8 @@ const wss = new WebSocket.Server({ port: 1234 });
 
 console.log('Node.js WebSocket server started on port 1234');
 
-var lat=parseFloat(18.5246)
-var lng=parseFloat(73.8786)
+// var lat=parseFloat(18.5246)
+// var lng=parseFloat(73.8786)
 
 wss.on('connection', ws => {
     console.log('Client connected');

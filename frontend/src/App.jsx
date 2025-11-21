@@ -9,7 +9,7 @@ function App() {
   const [userLocation, setUserLocation] = useState(null);
   //"https://websocketserver-npgf.onrender.com"
   const [socketUrl, setSocketUrl] = useState(
-    "https://websocketserver-npgf.onrender.com"
+    "wss://websocketserver-npgf.onrender.com"
   );
   //const [socketUrl, setSocketUrl] = useState("ws://127.0.0.1:1234");
   const [count, setCount] = useState(0);
@@ -58,7 +58,7 @@ function App() {
   const startLocationInterval = () => {
     setInterval(() => {
       getUserLocation();
-    }, 4000);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -68,23 +68,17 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div className="flex flex-col w-screen">
-        <div className="p-4">
-          <div className="h-24">Live Location Sender</div>
-          <button onClick={() => startLocationInterval()}>
-            Get User Location
-          </button>
-        </div>
-        <div className="flex justify-center align-center h-[60%] border-1 border-blue-100 m-5">
-          <textarea
-            className="h-[60%] w-[100%]"
-            value={log}
-            readOnly
-          ></textarea>
-        </div>
+    <div className="flex flex-col m-5 h-full">
+      <div className="p-4">
+        <div className="h-24">Live Location Sender</div>
+        <button onClick={() => startLocationInterval()}>
+          Get User Location
+        </button>
       </div>
-    </>
+      <div className="flex justify-center align-center h-[60vh] border-1 border-blue-100 m-0">
+        <textarea className="h-[60vh]" value={log} readOnly></textarea>
+      </div>
+    </div>
   );
 }
 
