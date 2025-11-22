@@ -85,12 +85,14 @@ function App() {
           setSending(false);
           setError("error getting user location" + error);
           console.log("error getting user location" + error);
+          stopTimer();
         }
       );
     } else {
       setSending(false);
       setError("Geo Location is not supported in this browser");
       console.log("Geo Location is not supported in this browser");
+      stopTimer();
     }
   };
 
@@ -117,6 +119,7 @@ function App() {
       // }, 2000);
     } else {
       setError("No Connection to Websocket Server");
+      stopTimer();
     }
   };
 
