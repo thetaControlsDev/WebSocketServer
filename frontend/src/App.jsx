@@ -12,6 +12,11 @@ function App() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const intervalIDRef = useRef(null);
+  const [speed, setSpeed] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
+
+  // let speed = 0;
+  // let accuracy = 0;
   //"https://websocketserver-npgf.onrender.com"
   const [socketUrl, setSocketUrl] = useState(
     "wss://websocketserver-npgf.onrender.com"
@@ -46,29 +51,33 @@ function App() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           let currLocation = position.coords;
-          let speed = currLocation.speed;
-          let accuracy = currLocation.accuracy;
+          setSpeed(currLocation.speed);
+          let speedData = currLocation.speed;
+          setAccuracy(currLocation.accuracy);
+          let accuracyData = currLocation.accuracy;
           let timeStamp = position.timestamp;
-          console.log(position);
+          //console.log(speed, accuracy);
+          //console.log(position);
           const locationString = `${timeStamp},${currLocation.latitude},${currLocation.longitude}`;
           sendMessage(locationString);
           setLog(
             (prev) =>
               prev +
-              " Lat: " +
+              " " +
+              // " Lat: " +
               currLocation.latitude +
               " ; " +
-              "Lng: " +
+              // "Lng: " +
               currLocation.longitude +
+              // " ; " +
+              // "Speed: " +
+              // speed +
               " ; " +
-              "Speed: " +
-              speed +
-              " ; " +
-              "TimeStamp: " +
+              // "TimeStamp: " +
               new Date(timeStamp) +
-              " ; " +
-              "Accuracy: " +
-              accuracy +
+              // " ; " +
+              // "Accuracy: " +
+              // accuracy +
               "\n"
           );
         },
@@ -142,21 +151,34 @@ function App() {
           {message}
         </div>
         <div className="flex flex-row justify-around items-center">
-          <div>
-            <span>Server WebSocket : </span>
-            {connection ? (
-              <>
-                <span className="text-green-400"> Connected</span>
-              </>
-            ) : (
-              <>
-                <span className="text-red-400"> Disconnected</span>
-              </>
-            )}
+          <div className="flex flex-col">
+            <div>
+              <span>Server WebSocket : </span>
+              {connection ? (
+                <>
+                  <span className="text-green-400"> Connected</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-red-400"> Disconnected</span>
+                </>
+              )}
+            </div>
+            <div>
+              <span>Data packets : </span>
+              {sending ? (
+                <>
+                  <span className="text-green-400"> Sending</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-red-400"> Not Sending</span>
+                </>
+              )}
+            </div>
           </div>
           {sending ? (
             <>
-              <span>Sending data... </span>
               <button
                 className="background-red-500"
                 onClick={() => stopTimer()}
@@ -172,6 +194,35 @@ function App() {
             </>
           )}
         </div>
+        {sending ? (
+          <>
+            <div>
+              {speed != null ? (
+                <>
+                  <span>
+                    {" "}
+                    Speed:<span className="text-yellow-400">{speed}</span>{" "}
+                  </span>
+                </>
+              ) : (
+                <></>
+              )}
+              {accuracy != null ? (
+                <>
+                  <span>
+                    {" "}
+                    Accuracy :{" "}
+                    <span className="text-yellow-400">{accuracy}</span>{" "}
+                  </span>
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="flex justify-center align-center h-[60vh] border-1 border-blue-100 m-0">
         <textarea

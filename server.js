@@ -12,7 +12,14 @@ wss.on('connection', ws => {
 
     // Handle messages from the client (e.g., from the Qt app)
     ws.on('message', message => {
-        console.log(`Received message: ${message}`);
+        let messageData=message.toString();
+        let messageDataParts=messageData.split(",")
+        let timeStamp=messageDataParts[0]
+        let lat=messageDataParts[1]
+        let lng=messageDataParts[2]
+        //console.log(`Received message: ${message}`);
+        console.log(`${lat},${lng},${Date(timeStamp)}`)
+
         // Send a response back to the client
         ws.send(`${message}`);
         //send to all clients 
