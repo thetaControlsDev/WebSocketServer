@@ -15,9 +15,8 @@ function App() {
   const [speed, setSpeed] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
 
-  // let speed = 0;
-  // let accuracy = 0;
-  //"https://websocketserver-npgf.onrender.com"
+  const watchIdRef = useRef(null);
+
   const [socketUrl, setSocketUrl] = useState(
     "wss://websocketserver-npgf.onrender.com"
   );
@@ -114,9 +113,6 @@ function App() {
     if (connection) {
       setMessageDialog("Starting Location Interval");
       startTimer();
-      // setInterval(() => {
-      //   getUserLocation();
-      // }, 2000);
     } else {
       setError("No Connection to Websocket Server");
       stopTimer();
@@ -136,11 +132,60 @@ function App() {
     intervalIDRef.current = null;
   }, []);
 
+  const startLocationTracking = () => {
+    if (!connection) {
+      setError("No Connection to Websocket Server");
+      return;
+    }
+    if (watchIdRef.current !== null) {
+      return;
+    }
+    setSending(true);
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (position) => {
+        const coords = position.coords;
+        const timeStamp = position.timestamp;
+
+        setSpeed(coords.speed);
+        setAccuracy(coords.accuracy);
+
+        const locationString = `${timeStamp},${coords.latitude},${coords.longitude}`;
+        sendMessage(locationString);
+
+        setLog(
+          (prev) =>
+            prev +
+            `${coords.latitude}, ${coords.longitude}, ${new Date(timeStamp)}\n`
+        );
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setError("Error getting location: " + error.message);
+        stopLocationTracking();
+      },
+      {
+        enableHighAccuracy: true, // Critical for mobile GPS accuracy
+        timeout: 10000, // 10 second timeout
+        maximumAge: 0, // Don't use cached positions - this fixes your issue!
+      }
+    );
+  };
+
+  const stopLocationTracking = () => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+    setSending(false);
+  };
+
   useEffect(() => {
-    // setInterval(()=>{
-    //     getUserLocation()
-    // },4000)
-    return () => clearInterval(intervalIDRef.current);
+    return () => {
+      clearInterval(intervalIDRef.current);
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -184,14 +229,14 @@ function App() {
             <>
               <button
                 className="background-red-500"
-                onClick={() => stopTimer()}
+                onClick={() => stopLocationTracking()}
               >
                 Stop
               </button>
             </>
           ) : (
             <>
-              <button onClick={() => startLocationInterval()}>
+              <button onClick={() => startLocationTracking()}>
                 Send User Location
               </button>
             </>
