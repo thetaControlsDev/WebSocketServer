@@ -140,16 +140,19 @@ function App() {
     if (watchIdRef.current !== null) {
       return;
     }
+    setMessageDialog("Starting Location Tracker");
     setSending(true);
     watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
         const coords = position.coords;
         const timeStamp = position.timestamp;
+        const speed = position.speed;
 
         setSpeed(coords.speed);
         setAccuracy(coords.accuracy);
 
-        const locationString = `${timeStamp},${coords.latitude},${coords.longitude}`;
+        const locationString = `${timeStamp},${coords.latitude},${coords.longitude},${coords.speed}`;
+
         sendMessage(locationString);
 
         setLog(
@@ -164,9 +167,9 @@ function App() {
         stopLocationTracking();
       },
       {
-        enableHighAccuracy: true, // Critical for mobile GPS accuracy
+        enableHighAccuracy: true,
         timeout: 10000, // 10 second timeout
-        maximumAge: 0, // Don't use cached positions - this fixes your issue!
+        maximumAge: 0, // no caching
       }
     );
   };
@@ -181,7 +184,7 @@ function App() {
 
   useEffect(() => {
     return () => {
-      clearInterval(intervalIDRef.current);
+      //clearInterval(intervalIDRef.current);
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
